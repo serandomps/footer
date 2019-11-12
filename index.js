@@ -17,12 +17,16 @@ module.exports = function (ctx, container, options, done) {
         var fixed = $('.fixed', sandbox.append(out));
 
         $('.top', fixed).on('click', function () {
-           utils.emit('serand', 'scroll top');
+            utils.emit('serand', 'scroll top');
         });
 
         $('.bottom', fixed).on('click', function () {
-           utils.emit('serand', 'scroll bottom');
+            utils.emit('serand', 'scroll bottom');
         });
+
+        var displayHandler;
+
+        var scrollTop = 0;
 
         var pages = function (total, active) {
             var el = $('.pages', fixed);
@@ -32,13 +36,28 @@ module.exports = function (ctx, container, options, done) {
         };
 
         var scrolled = function (o) {
+            var top = scrollTop;
+            scrollTop = o.scrollTop;
             if (o.docHeight < 2 * o.winHeight) {
                 fixed.addClass('hidden');
                 $('.top', fixed).addClass('hidden');
                 $('.bottom', fixed).addClass('hidden');
                 return;
             }
-            fixed.removeClass('hidden');
+            var winWidth = o.winWidth;
+            if (winWidth < 1300) {
+                if (Math.abs(o.scrollTop - top) * winWidth < 10000) {
+                    // possible manual read
+                    return;
+                }
+                clearTimeout(displayHandler);
+                displayHandler = setTimeout(function () {
+                    fixed.addClass('fade');
+                }, 2000);
+            } else {
+                clearTimeout(displayHandler);
+            }
+            fixed.removeClass('hidden fade');
             if (o.scrollTop < o.winHeight) {
                 $('.top', fixed).addClass('hidden');
                 $('.bottom', fixed).removeClass('hidden');
