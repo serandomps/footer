@@ -9,7 +9,8 @@ module.exports = function (ctx, container, options, done) {
     dust.render('footer', serand.pack({
         year: moment().year(),
         privacy: 'www:///privacy',
-        terms: 'www:///terms'
+        terms: 'www:///terms',
+        imprint: 'www:///imprint'
     }, container), function (err, out) {
         if (err) {
             return done(err);
