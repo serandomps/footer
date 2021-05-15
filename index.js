@@ -1,6 +1,7 @@
 var dust = require('dust')();
 var serand = require('serand');
 var utils = require('utils');
+var watcher = require('watcher');
 
 dust.loadSource(dust.compile(require('./template.html'), 'footer'));
 
@@ -18,11 +19,11 @@ module.exports = function (ctx, container, options, done) {
         var fixed = $('.fixed', sandbox.append(out));
 
         $('.top', fixed).on('click', function () {
-            utils.emit('serand', 'scroll top');
+            watcher.emit('serand', 'scroll top');
         });
 
         $('.bottom', fixed).on('click', function () {
-            utils.emit('serand', 'scroll bottom');
+            watcher.emit('serand', 'scroll bottom');
         });
 
         var displayHandler;
@@ -68,12 +69,12 @@ module.exports = function (ctx, container, options, done) {
             $('.bottom', fixed).addClass('hidden');
         };
 
-        utils.on('footer', 'pages', pages);
-        utils.on('serand', 'scrolled', scrolled);
+        watcher.on('footer', 'pages', pages);
+        watcher.on('serand', 'scrolled', scrolled);
 
         done(null, function () {
-            utils.off('footer', 'pages', pages);
-            utils.off('footer', 'scrolled', scrolled);
+            watcher.off('footer', 'pages', pages);
+            watcher.off('footer', 'scrolled', scrolled);
             $('.footer', sandbox).remove();
         });
     });
